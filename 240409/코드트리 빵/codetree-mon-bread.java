@@ -2,9 +2,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
@@ -30,6 +30,29 @@ public class Main {
 	static int dc[] = new int[]{0,-1,1,0};
 	static Queue<int[]> nextBlock = new LinkedList<>();
 	static List<int[]> baseCamps = new ArrayList<>();
+	static PriorityQueue<Square> pq = new PriorityQueue<>();
+	
+	
+	static class Square implements Comparable<Square>{
+		int r, c, dist;
+
+		public Square(int r, int c, int dist) {
+			this.r = r;
+			this.c = c;
+			this.dist = dist;
+		}
+
+		@Override
+		public int compareTo(Square o) {
+			if(this.dist == o.dist && this.r == o.r) return this.c - o.c;
+			else if(this.dist == o.dist) return this.r - o.r;
+			return this.dist - o.dist;
+		}
+		
+		
+		
+		
+	}
 	
 	static class Person{
 		int r, c, targetR, targetC;
@@ -67,7 +90,7 @@ public class Main {
 		}
 		
 		int answer = -1;
-		// dfs 탐색
+		// bfs 탐색
 		while(!q.isEmpty()) {
 			int[] cur = q.poll();
 			
@@ -119,35 +142,67 @@ public class Main {
 		}
 	}
 	
-	private static int dfs(int startR, int startC, int targetR, int targetC) {
-		Queue<int[]> q = new LinkedList<>();
+	private static Square bfs(int startR, int startC, int targetR, int targetC) {
+		Queue<Square> q = new LinkedList<>();
 		boolean visited[][] = new boolean[N+1][N+1];
 		
-		q.add(new int[] {startR,startC,0});
+		q.add(new Square(startR,startC,0));
 		visited[startR][startC] = true;
 		
-		int answer = 0;
+		Square answer = null;
 		// dfs 탐색
 		while(!q.isEmpty()) {
-			int[] cur = q.poll();
+			Square cur = q.poll();
 			
-			if(cur[0] == targetR && cur[1] == targetC) {
-				answer = cur[2]; // 최단거리 저장
+			if(cur.r == targetR && cur.c == targetC) {
+				answer = cur; // 최단거리 저장
 				break;
 			}
 			
 			for (int i = 0; i < 4; i++) {
-				int nr = cur[0] + dr[i];
-				int nc = cur[1] + dc[i];
+				int nr = cur.r + dr[i];
+				int nc = cur.c + dc[i];
 				
 				if(nr < 1 || nr > N || nc < 1 || nc > N || cannotGo[nr][nc] || visited[nr][nc] ) continue;
 				
 				visited[nr][nc] = true;
-				q.add(new int[] {nr, nc, cur[2]+1});
+				q.add(new Square(nr, nc, cur.dist+1));
 			}
 		}
 		
 		return answer;
+		
+		
+		
+		
+//		Queue<int[]> q = new LinkedList<>();
+//		boolean visited[][] = new boolean[N+1][N+1];
+//		
+//		q.add(new int[] {startR,startC,0});
+//		visited[startR][startC] = true;
+//		
+//		int answer = 0;
+//		// dfs 탐색
+//		while(!q.isEmpty()) {
+//			int[] cur = q.poll();
+//			
+//			if(cur[0] == targetR && cur[1] == targetC) {
+//				answer = cur[2]; // 최단거리 저장
+//				break;
+//			}
+//			
+//			for (int i = 0; i < 4; i++) {
+//				int nr = cur[0] + dr[i];
+//				int nc = cur[1] + dc[i];
+//				
+//				if(nr < 1 || nr > N || nc < 1 || nc > N || cannotGo[nr][nc] || visited[nr][nc] ) continue;
+//				
+//				visited[nr][nc] = true;
+//				q.add(new int[] {nr, nc, cur[2]+1});
+//			}
+//		}
+//		
+//		return answer;
 		
 	}
 	
@@ -159,40 +214,42 @@ public class Main {
 			
 			int tempMin = Integer.MAX_VALUE;
 			
-			int[] dists = new int[baseCamps.size()];
-			
-			for (int j = 0; j < baseCamps.size(); j++) {
-				dists[j] = Integer.MAX_VALUE;
-			}
-			
+			pq.clear();
+//			int[] dists = new int[baseCamps.size()];
+//			
+//			for (int j = 0; j < baseCamps.size(); j++) {
+//				dists[j] = Integer.MAX_VALUE;
+//			}
+//			
 			
 			for (int j = 0; j < baseCamps.size(); j++) {
 				if(cannotGo[baseCamps.get(j)[0]][baseCamps.get(j)[1]]) continue;
-//				System.out.println(persons[i].targetR);
-//				System.out.println(persons[i].targetC);
-//				System.out.println(baseCamps.get(j)[0]);
-//				System.out.println(baseCamps.get(j)[1]);
-//				System.out.println("============");
-//				System.out.println(dfs(4,4,2,1));
-				dists[j] = dfs(persons[i].targetR, persons[i].targetC, baseCamps.get(j)[0], baseCamps.get(j)[1]);
-				if(tempMin > dists[j]) tempMin = dists[j];
+
+				//dists[j] = bfs(persons[i].targetR, persons[i].targetC, baseCamps.get(j)[0], baseCamps.get(j)[1]);
+				pq.add(bfs(persons[i].targetR, persons[i].targetC, baseCamps.get(j)[0], baseCamps.get(j)[1]));
+				//if(tempMin > dists[j]) tempMin = dists[j];
 			}
 			
 			
-			int answer = -1; // 목표하는 베이스캠프
-			for (int j = 0; j < baseCamps.size(); j++) {
-				if(tempMin == dists[j]) {
-					answer = j;
-					break;
-				}
-			}
+//			int answer = -1; // 목표하는 베이스캠프
+//			for (int j = 0; j < baseCamps.size(); j++) {
+//				if(tempMin == dists[j]) {
+//					answer = j;
+//					break;
+//				}
+//			}
 			
 			
 			
-			persons[i].r = baseCamps.get(answer)[0];
-			persons[i].c = baseCamps.get(answer)[1]; // 베이스캠프로 이동
+//			persons[i].r = baseCamps.get(answer)[0];
+//			persons[i].c = baseCamps.get(answer)[1]; // 베이스캠프로 이동
 			
-			nextBlock.add(new int[] {baseCamps.get(answer)[0], baseCamps.get(answer)[1]}); // 다음번에 막을 좌표 저장
+			Square answer = pq.poll();
+			persons[i].r = answer.r;
+			persons[i].c = answer.c;
+			
+			//nextBlock.add(new int[] {baseCamps.get(answer)[0], baseCamps.get(answer)[1]}); // 다음번에 막을 좌표 저장
+			nextBlock.add(new int[] {answer.r, answer.c}); // 다음번에 막을 좌표 저장
 		}
 		
 	}
