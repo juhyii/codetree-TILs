@@ -155,7 +155,7 @@ public class Main {
 			Square cur = q.poll();
 			
 			if(cur.r == targetR && cur.c == targetC) {
-				answer = cur; // 최단거리 저장
+				answer = new Square(targetR, targetC, cur.dist); // 최단거리 저장
 				break;
 			}
 			
