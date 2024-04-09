@@ -98,8 +98,11 @@ public class Main {
 			 
 			 int dir = chooseDir(persons[i].r, persons[i].c, persons[i].targetR, persons[i].targetC);
 			 
-			 persons[i].r += dr[dir];
-			 persons[i].c += dc[dir];
+			 if(dir != -1) {
+				 persons[i].r += dr[dir];
+				 persons[i].c += dc[dir];
+			 }
+			 
 		}
 		
 	}
@@ -224,7 +227,8 @@ public class Main {
 			}
 		}
     	
-//    	for (int i = 1; i <= N; i++) {
+    	
+//    	for (int i = 0; i < map.length; i++) {
 //    		System.out.println(Arrays.toString(map[i]));
 //    	}
     	
