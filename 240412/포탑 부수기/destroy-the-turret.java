@@ -221,7 +221,7 @@ public class Main {
 				if(map[i][j].power <= 0) {
 					canGo[i][j] = false;
 					map[i][j].dead = true;
-					cnt++;
+					cnt--;
 				}
 				
 			}
