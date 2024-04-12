@@ -157,12 +157,12 @@ public class Main {
 	}
 	
 	private static void attack() {
-		while(leak.peek().dead) leak.poll();
+
 		Turrent attacker = leak.poll();
 		attacker.power += N+M;
 		attacker.currentAttackT = time;
 		
-		while(strong.peek().dead) leak.poll();
+
 		Turrent victim = strong.poll();
 		
 		List<int[]> r = bfs(attacker, victim);
@@ -175,8 +175,8 @@ public class Main {
 			laser(r);
 		}
 		
-		leak.add(attacker);
-		strong.add(victim);
+//		leak.add(attacker);
+//		strong.add(victim);
 		
 	}
 	
