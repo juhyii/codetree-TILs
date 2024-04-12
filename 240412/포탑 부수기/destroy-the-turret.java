@@ -167,7 +167,9 @@ public class Main {
 		
 		List<int[]> r = bfs(attacker, victim);
 		
-		if(r.size() == 0) { // 포탄공격
+//		System.out.println(r);
+		
+		if(r.size() <= 1) { // 포탄공격
 			shell(attacker, victim);
 		}else { // 레이저공격
 			laser(r);
@@ -188,6 +190,11 @@ public class Main {
 			int nc = next(victim.c, dc[i], false);
 			
 			if(!canGo[nr][nc]) continue;
+			
+//			System.out.println("==========");
+//			System.out.println(nr);
+//			System.out.println(nc);
+//			System.out.println("==========");
 			
 			map[nr][nc].power -= attackPower/2;
 			map[nr][nc].currentAttackT = time;
@@ -221,12 +228,18 @@ public class Main {
 	}
 	
 	private static void repair() {
+		leak.clear();
+		strong.clear();
+		
 		for (int i = 1; i <= N; i++) {
 			for (int j = 1; j <= M; j++) {
 				if(!canGo[i][j]) continue;
 				
 				if(map[i][j].currentAttackT != time)
 					map[i][j].power++;
+				
+				leak.add(map[i][j]);
+				strong.add(map[i][j]);
 			}
 		}
 	}
@@ -264,6 +277,9 @@ public class Main {
 //			}
 //			System.out.println();
 //		}
+//		
+//		System.out.println(next(1,-1,true));
+//		System.out.println(next(2,1,false));
 		
 		while(time < K) {
 			if(cnt == 1) break;
