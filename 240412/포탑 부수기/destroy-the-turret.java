@@ -221,6 +221,7 @@ public class Main {
 				if(map[i][j].power <= 0) {
 					canGo[i][j] = false;
 					map[i][j].dead = true;
+					cnt++;
 				}
 				
 			}
@@ -282,7 +283,7 @@ public class Main {
 //		System.out.println(next(2,1,false));
 		
 		while(time < K) {
-			if(cnt == 1) break;
+			if(cnt <= 1) break;
 			time++;
 			
 			attack();
